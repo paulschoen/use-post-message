@@ -2,17 +2,20 @@ import Spinner from './Spinner';
 
 import { FC, lazy, Suspense } from 'react';
 import { useCountStore } from '../stores/useCountStore';
+import { useShallow } from 'zustand/shallow';
 
 const SyncIcon = lazy(() => import('../assets/Sync'));
 const UnsyncIcon = lazy(() => import('../assets/Unsync'));
 
 const Actions: FC = () => {
-	const { mode, increment, decrement, setMode } = useCountStore((s) => ({
-		mode: s.mode,
-		increment: s.increment,
-		decrement: s.decrement,
-		setMode: s.setMode,
-	}));
+	const { mode, increment, decrement, setMode } = useCountStore(
+		useShallow((s) => ({
+			mode: s.mode,
+			increment: s.increment,
+			decrement: s.decrement,
+			setMode: s.setMode,
+		}))
+	);
 
 	return (
 		<div className="animate-in grid grid-cols-2 place-items-center md:flex md:flex-wrap md:items-center md:justify-center gap-4">

@@ -1,26 +1,28 @@
-# use-broadcast-ts
+# use-post-message-ts
 
-[![Version](https://img.shields.io/npm/v/use-broadcast-ts?style=flat&colorA=000000&colorB=000000)](https://npmjs.com/package/use-broadcast-ts)
-[![Build Size](https://img.shields.io/bundlephobia/minzip/use-broadcast-ts?label=bundle%20size&style=flat&colorA=000000&colorB=000000)](https://bundlephobia.com/result?p=use-broadcast-ts)
-![GitHub Workflow Status (with branch)](https://img.shields.io/github/actions/workflow/status/Romainlg29/use-broadcast/basic.yml?branch=main&colorA=000000&colorB=000000)
-![GitHub](https://img.shields.io/github/license/Romainlg29/use-broadcast?&colorA=000000&colorB=000000)
+[![Version](https://img.shields.io/npm/v/use-post-message-ts?style=flat&colorA=000000&colorB=000000)](https://npmjs.com/package/use-post-message-ts)
+[![Build Size](https://img.shields.io/bundlephobia/minzip/use-post-message-ts?label=bundle%20size&style=flat&colorA=000000&colorB=000000)](https://bundlephobia.com/result?p=use-post-message-ts)
+![GitHub Workflow Status (with branch)](https://img.shields.io/github/actions/workflow/status/paulschoen/use-post-message/basic.yml?branch=main&colorA=000000&colorB=000000)
+![GitHub](https://img.shields.io/github/license/paulschoen/use-post-message?&colorA=000000&colorB=000000)
 
-Use the Broadcast Channel API in React easily with `hooks` or `Zustand`, and Typescript!
+> **Note:** This project is forked from [use-broadcast](https://github.com/Romainlg29/use-broadcast).
+
+Easily synchronize state across browser tabs and iframes—even **across different origins**—using `window.postMessage` in React, Zustand, and TypeScript. If you require synchronization within the same origin only, please consider using [`use-broadcast-ts`](https://npmjs.com/package/use-broadcast-ts) instead.
 
 ```bash
-npm install use-broadcast-ts
+npm install use-post-message-ts
 ```
 
-This package allows you to use the Broadcast API with a simple hook or by using Zustand v4/v5.
+This package allows you to use the `window.postMessage` across open windows and iframes. It is useful when you want to share state between different tabs or iframes with different origins.
 
-Checkout the [demo](https://romainlg29.github.io/use-broadcast/)!
+Check out the [demo](https://paulschoen.github.io/use-post-message/)!
 
 ## Usage with Zustand
 
 ```jsx
 // useStore.ts
 import { create } from 'zustand';
-import { shared } from 'use-broadcast-ts';
+import { shared } from 'use-post-message-ts';
 
 type MyStore = {
     count: number;
@@ -33,16 +35,14 @@ const useStore = create<MyStore>(
             count: 0,
             set: (n) => set({ count: n })
         }),
-        { name: 'my-channel' }
+        { name: 'my-channel', targetOriginUrls: ['http://localhost:3000'], targetElementIFrameIds: [document.getElementById('iframe')] }
     )
 );
 
 // MyComponent.tsx
 import { FC } from 'react';
-import { useShallow } from 'zustand/shallow'
 
-const MyComponent : FC = () => {
-
+const MyComponent: FC = () => {
     const count = useStore((s) => s.count);
     const set = useStore((s) => s.set);
 
@@ -51,21 +51,17 @@ const MyComponent : FC = () => {
             <p>Count: {count}</p>
             <button onClick={() => set(10)}/>
         </p>
-    )
+    );
 }
 
 export default MyComponent;
 ```
 
-You can use the Zustand store like any other Zustand store, but the store will be shared between all the tabs.
+You can use the Zustand store like any other Zustand store, but the store will be shared between all windows and iframes.
 
-On the first "render" of the store, the middleware will check if the store already exists in another tab / window. If the store exits, it will be synchronized, else the store will be created.
+On the first "render" of the store, the middleware will check if the store already exists in another tab/window. If the store exists, it will be synchronized; otherwise, the store will be created.
 
-If no tab is opened, the store will be created and will be shared as the "main" with the other tabs / windows.
-
-_**Note:** It cannot be used in server components as it needs an environment that support the Broadcast Channel API_
-
-#### New in v1.4.0
+If no tab is opened, the store will be created and will be shared as the "main" with the other tabs/windows.
 
 - You don't have to specify a channel name anymore. The channel name is now automatically generated. **However, I strongly recommend you to use it.**
 
@@ -73,10 +69,10 @@ _**Note:** It cannot be used in server components as it needs an environment tha
 
 ```jsx
 import { FC } from 'react';
-import { useBroadcast } from 'use-broadcast-ts';
+import { usePostMessage } from 'use-post-message-ts';
 
 const MyComponent: FC = () => {
-    const { state, send } = useBroadcast<{ value: number }>('my-channel', { value: 0 });
+    const { state, send } = usePostMessage<{ value: number }>('my-channel', { value: 0 });
 
     return (
         <>
@@ -89,14 +85,14 @@ const MyComponent: FC = () => {
 export default MyComponent;
 ```
 
-With the example above, the component will re-render when the channel receive or send a value.
+With the example above, the component will re-render when the channel receives or sends a value.
 
 ```jsx
 import { FC, useEffect } from 'react';
-import { useBroadcast } from 'use-broadcast-ts';
+import { usePostMessage } from 'use-post-message-ts';
 
 const MyComponent: FC = () => {
-    const { send, subscribe } = useBroadcast<{ value: number }>('my-channel', { value: 0 }, { subscribe: true });
+    const { send, subscribe } = usePostMessage<{ value: number }>('my-post-message-channel', { value: 0 }, { subscribe: true });
 
     useEffect(() => {
 	    const unsub = subscribe(({ value }) => console.log(`My new value is: ${value}`));
@@ -114,17 +110,17 @@ const MyComponent: FC = () => {
 export default MyComponent;
 ```
 
-With the example above, the component will not re-render when the channel receive or send a value but will call the `subscribe` callback.
+With the example above, the component will not re-render when the channel receives or sends a value but will call the `subscribe` callback.
 
 ## API
 
 ### shared (Zustand)
 
 ```ts
-    shared(
-        (set, get, ...) => ...,
-        options?: SharedOptions
-    );
+shared(
+    (set, get, ...) => ...,
+    options?: SharedOptions
+);
 ```
 
 #### Parameters
@@ -140,6 +136,18 @@ The options of the hook.
 Type: `string`
 
 The name of the channel to use.
+
+##### options.targetOriginUrls
+
+Type: `targetOriginUrls` (default: [targetWindow.origin])
+
+The target origins to send the message to. If the target origin is not in the list, the message will be sent to its own origin.
+
+##### options.targetElementIFrameIds
+
+Type: `targetElementIFrameIds[]` (default: [])
+
+The target iframes to send the message to. If the target iframe is not in the list, the message will be sent to all iframes so be aware of that.
 
 ##### options.mainTimeout
 
@@ -160,11 +168,13 @@ Type: `boolean` (default `false`)
 If true, will not serialize the state with `JSON.parse(JSON.stringify(state))` before sending it. This results in a performance boost, but you will have to ensure there are no unsupported types in the state or it will result in errors. See section [What data can I send?](#what-data-can-i-send) for more info.
 
 ##### options.partialize
+
 Type: `(state: T) => Partial<T>` (default: `undefined`)
 
 Similar to `partialize` in the [Zustand persist middleware](https://zustand.docs.pmnd.rs/integrations/persisting-store-data#partialize), allows you to pick which of the state's fields are sent to other tabs. Can also be used to pre-process the state before it's sent if needed.
 
 ##### options.merge
+
 Type: `(state: T, receivedState: Partial<T>) => T` (default: `undefined`)
 
 Similar to `merge` in the [Zustand persist middleware](https://zustand.docs.pmnd.rs/integrations/persisting-store-data#merge). A custom function that allows you to merge the current state with the state received from another tab.
@@ -182,10 +192,10 @@ Type: `(tabs: number[]) => void`
 A callback that will be called when the number of tabs changes.
 Only triggered on the main tab.
 
-### useBroadcast (hooks)
+### usePostMessage (hooks)
 
 ```ts
-useBroadcast<T>(name: string, value?: T, options?: UseBroadcastOptions): {
+usePostMessage<T>(name: string, value?: T, options?: UsePostMessageOptions): {
     state: T;
     send: (value: T) => void;
     subscribe: (callback: (e: T) => void) => () => void;
@@ -208,7 +218,7 @@ The initial value of the channel.
 
 ##### options
 
-Type: `UseBroadcastOptions` (default: `{}`)
+Type: `UsePostMessageOptions` (default: `{}`)
 
 The options of the hook.
 
@@ -216,7 +226,7 @@ The options of the hook.
 
 Type: `boolean | undefined` (default: `undefined`)
 
-If true, the hook will not re-render the component when the channel receive a new value but will call the `subscribe` callback.
+If true, the hook will not re-render the component when the channel receives a new value but will call the `subscribe` callback.
 
 #### Return
 
@@ -236,11 +246,11 @@ Send a new value to the channel.
 
 Type: `(callback: (e: T) => void) => () => void`
 
-Subscribe to the channel. The callback will be called when the channel receive a new value and when the options.subscribe is set to true.
+Subscribe to the channel. The callback will be called when the channel receives a new value and when the options.subscribe is set to true.
 
 ## What data can I send?
 
-You can send any of the supported types by the structured clone algorithm and `JSON.stringify` like :
+You can send any of the supported types by the structured clone algorithm and `JSON.stringify`, such as:
 
 - `String`
 - `Boolean`
@@ -250,14 +260,14 @@ You can send any of the supported types by the structured clone algorithm and `J
 - `Date`
 - `...`
 
-In short, you cannot send :
+In short, you cannot send:
 
 - `Function`
-- `Dom Element`
-- `BigInt` (This is only unsupported by `JSON.stringify`, so if you set `skipSerialization=true`, `BigInt`'s will work)
+- `DOM Element`
+- `BigInt` (This is only unsupported by `JSON.stringify`, so if you set `skipSerialization=true`, `BigInt`s will work)
 - And some other types
 
-See the [MDN documentation](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm) for more information. However, if you need to, you could use `partialize` to convert an unsupported type to a string and convert it back on the other end by providing a `merge` function.
+See the [MDN documentation](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm) for more information. However, if needed, you could use `partialize` to convert an unsupported type to a string and convert it back on the other end by providing a `merge` function.
 
 ## License
 

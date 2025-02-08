@@ -1,12 +1,12 @@
-import { shared } from 'use-broadcast-ts';
-import { createWithEqualityFn as create } from 'zustand/traditional';
+import { shared } from 'use-post-message-ts';
+import { create } from 'zustand';
 
 type CountStore = {
 	count: number;
 	increment: () => void;
 	decrement: () => void;
 
-	mode: 'Sync' | 'Not Sync';
+	mode: string;
 	setMode: (mode: 'Sync' | 'Not Sync') => void;
 };
 
@@ -20,6 +20,6 @@ export const useCountStore = create<CountStore>()(
 			mode: 'Sync',
 			setMode: (mode) => set({ mode }),
 		}),
-		{ name: 'my-store' }
+		{ name: 'my-store', targetOriginUrls: [window.origin], targetElementIFrameIds: ['demo-iframe'] }
 	)
 );

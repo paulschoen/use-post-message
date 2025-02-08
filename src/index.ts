@@ -1,2 +1,2 @@
-export * from './useBroadcast';
+export * from './usePostMessage';
 export * from './shared';

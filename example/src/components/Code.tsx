@@ -1,10 +1,11 @@
 import { FC } from 'react';
 import { useCountStore } from '../stores/useCountStore';
+import { useShallow } from 'zustand/shallow';
 
 const tab = '    ';
 
 const Code: FC = () => {
-	const { count, mode } = useCountStore((s) => ({ count: s.count, mode: s.mode }));
+	const { count, mode } = useCountStore(useShallow((state) => ({ count: state.count, mode: state.mode })));
 
 	return (
 		<>
@@ -19,7 +20,7 @@ const Code: FC = () => {
 				<code className="text-purple-400">
 					import <span className="text-yellow-400">&#123;</span> <span className="text-blue-300">shared</span>{' '}
 					<span className="text-yellow-400">&#125;</span> from{' '}
-					<span className="text-yellow-600">'use-broadcast-ts'</span>
+					<span className="text-yellow-600">'use-post-message-ts'</span>
 					<span className="text-white">;</span>
 				</code>
 			</pre>
@@ -141,7 +142,7 @@ const Code: FC = () => {
 					<span className="text-yellow-600">'count-store'</span>
 					{mode === 'Not Sync' ? (
 						<>
-							, <span className="text-blue-300">unsync: </span>
+							, <span className="text-blue-300">unSync: </span>
 							<span className="text-blue-400">true</span>
 						</>
 					) : (

@@ -1,7 +1,7 @@
 {
-	"name": "use-broadcast-ts",
-	"version": "2.0.0",
-	"description": "Use the Broadcast Channel API in React easily with hooks or Zustand, and Typescript!",
+	"name": "use-post-message-ts",
+	"version": "0.1.1",
+	"description": "Use the window.postChannel in React easily with hooks or Zustand, and Typescript!",
 	"type": "module",
 	"types": "./dist/index.d.ts",
 	"main": "./dist/index.js",
@@ -14,6 +14,7 @@
 	"sideEffects": false,
 	"scripts": {
 		"build": "rollup -c --bundleConfigAsCjs",
+		"build:watch": "rollup -c --bundleConfigAsCjs --watch",
 		"postbuild": "tsc --emitDeclarationOnly",
 		"prepublishOnly": "npm run build",
 		"test": "jest"
@@ -30,17 +31,17 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/Romainlg29/use-broadcast.git"
+		"url": "git+https://github.com/paulschoen/use-post-message.git"
 	},
 	"keywords": [
 		"web",
 		"api",
-		"broadcast",
+		"postMessage",
 		"channel",
-		"broadcast-channel",
+		"window",
 		"hooks",
 		"react",
-		"react 18",
+		"react 19",
 		"zustand",
 		"middleware",
 		"state"
@@ -48,7 +49,7 @@
 	"author": "Romain Le Gall",
 	"license": "MIT",
 	"bugs": {
-		"url": "https://github.com/Romainlg29/use-broadcast/issues"
+		"url": "https://github.com/paulschoen/use-post-message/issues"
 	},
 	"devDependencies": {
 		"@babel/core": "7.21.4",
@@ -85,9 +86,9 @@
 		"rollup": "^3.20.7",
 		"typescript": "^5.0.4"
 	},
-	"homepage": "https://github.com/Romainlg29/use-broadcast",
+	"homepage": "https://github.com/paulschoen/use-post-message#readme",
 	"optionalDependencies": {
-		"zustand": "^4.0.0 || ^5.0.0",
-		"react": ">=18.0"
+		"react": ">=18.0",
+		"zustand": "^5.0.0"
 	}
 }

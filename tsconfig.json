@@ -14,5 +14,5 @@
     "removeComments": false,
     "baseUrl": "."
   },
-  "include": ["src", "src/useBroadcast.test.ts"]
+  "include": ["src", "src/usePostMessage.test.ts"]
 }
