@@ -58,7 +58,6 @@ const sharedImpl: SharedImpl = (f, options) => (set, get, store) => {
 	};
 
 	let isSynced = get() !== undefined;
-	let isMain = false;
 	const name = options?.name ?? f.toString();
 	const sourceId = Math.random().toString(36).slice(2, 11);
 
@@ -109,7 +108,6 @@ const sharedImpl: SharedImpl = (f, options) => (set, get, store) => {
 		}
 
 		if (message.action === 'sync') {
-			if (!isMain) return;
 			sendChangeToOtherTargets();
 			return;
 		}

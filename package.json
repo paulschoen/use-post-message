@@ -1,6 +1,6 @@
 {
 	"name": "use-post-message-ts",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"description": "Use the window.postChannel in React easily with hooks or Zustand, and Typescript!",
 	"type": "module",
 	"types": "./dist/index.d.ts",
@@ -46,7 +46,7 @@
 		"middleware",
 		"state"
 	],
-	"author": "Romain Le Gall",
+	"author": "Paul Schoen",
 	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/paulschoen/use-post-message/issues"
