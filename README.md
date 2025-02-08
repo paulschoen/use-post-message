@@ -63,8 +63,6 @@ On the first "render" of the store, the middleware will check if the store alrea
 
 If no tab is opened, the store will be created and will be shared as the "main" with the other tabs/windows.
 
-- You don't have to specify a channel name anymore. The channel name is now automatically generated. **However, I strongly recommend you to use it.**
-
 ## Usage with hooks
 
 ```jsx
@@ -178,19 +176,6 @@ Similar to `partialize` in the [Zustand persist middleware](https://zustand.docs
 Type: `(state: T, receivedState: Partial<T>) => T` (default: `undefined`)
 
 Similar to `merge` in the [Zustand persist middleware](https://zustand.docs.pmnd.rs/integrations/persisting-store-data#merge). A custom function that allows you to merge the current state with the state received from another tab.
-
-##### options.onBecomeMain
-
-Type: `(id: number) => void`
-
-A callback that will be called when the tab becomes the main tab.
-
-##### options.onTabsChange
-
-Type: `(tabs: number[]) => void`
-
-A callback that will be called when the number of tabs changes.
-Only triggered on the main tab.
 
 ### usePostMessage (hooks)
 

@@ -46,10 +46,6 @@ const Actions: FC = () => {
 				</ul>
 			</div>
 
-			<button className="btn btn-outline w-40" onClick={() => window.open('.', '_blank')}>
-				Open in new window
-			</button>
-
 			{mode === 'Not Sync' && (
 				<div className="toast">
 					<div className="alert alert-info">
