@@ -1,6 +1,6 @@
 {
 	"name": "use-post-message-ts",
-	"version": "0.1.3",
+	"version": "0.1.4",
 	"description": "Use the window.postChannel in React easily with hooks or Zustand, and Typescript!",
 	"type": "module",
 	"types": "./dist/index.d.ts",

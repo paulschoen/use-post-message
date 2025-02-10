@@ -63,10 +63,18 @@ const sharedImpl: SharedImpl = (f, options) => (set, get, store) => {
 
 	const processedMessageIds = new Set<string>();
 
+	const getTargetOrigin = (targetWindow: Window, options: SharedOptions<T> | undefined): string => {
+		if (options?.targetOriginUrls.includes('*')) {
+			return '*';
+		}
+		return options?.targetOriginUrls.find((url) => url === targetWindow.origin) ?? '';
+	};
+
 	const postMessageToAllTargets = (message: Message): void => {
 		determineTargetWindows().forEach((targetWindow) => {
 			try {
-				targetWindow.postMessage(message, targetWindow.origin);
+				const targetOrigin = getTargetOrigin(targetWindow, options);
+				targetWindow.postMessage(message, targetOrigin);
 			} catch (error) {
 				console.error('Failed to post message to window:', error);
 			}
@@ -99,7 +107,9 @@ const sharedImpl: SharedImpl = (f, options) => (set, get, store) => {
 	};
 
 	const onMessage = (event: MessageEvent) => {
-		if (!event.data || typeof event.data !== 'object') return;
+		if (!event.data || typeof event.data !== 'object' || !options?.targetOriginUrls.includes(event.origin)) {
+			return;
+		}
 
 		const message = event.data as Message;
 
