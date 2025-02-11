@@ -63,20 +63,21 @@ const sharedImpl: SharedImpl = (f, options) => (set, get, store) => {
 
 	const processedMessageIds = new Set<string>();
 
-	const getTargetOrigin = (targetWindow: Window, options: SharedOptions<T> | undefined): string => {
+	const getTargetOrigin = (options: SharedOptions<T> | undefined): string[] => {
 		if (options?.targetOriginUrls.includes('*')) {
-			return '*';
+			return ['*'];
 		}
-		return options?.targetOriginUrls.find((url) => url === targetWindow.origin) ?? '';
+		return options?.targetOriginUrls ?? [];
 	};
 
 	const postMessageToAllTargets = (message: Message): void => {
 		determineTargetWindows().forEach((targetWindow) => {
 			try {
-				const targetOrigin = getTargetOrigin(targetWindow, options);
-				targetWindow.postMessage(message, targetOrigin);
-			} catch (error) {
-				console.error('Failed to post message to window:', error);
+				getTargetOrigin(options).forEach((targetOrigin) => {
+					targetWindow.postMessage(message, targetOrigin);
+				});
+			} catch {
+				console.error('Failed to post message to target window');
 			}
 		});
 	};
