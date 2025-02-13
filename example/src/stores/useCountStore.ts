@@ -20,6 +20,10 @@ export const useCountStore = create<CountStore>()(
 			mode: 'Sync',
 			setMode: (mode) => set({ mode }),
 		}),
-		{ name: 'my-store', targetOriginUrls: [window.origin], targetElementIFrameIds: ['demo-iframe'] }
+		{
+			name: 'count-store',
+			targetOriginUrls: [window.origin],
+			targetElementIFrameIds: ['demo-iframe'],
+		}
 	)
 );

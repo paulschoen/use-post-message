@@ -17,7 +17,6 @@ const App = () => {
 				<div className="toast toast-top toast-start animate-in">
 					<div className="alert flex items-center justify-center">
 						<h1 className="font-semibold">use-post-message-ts</h1>
-						<button className="btn btn-sm btn-neutral">v0.1.3</button>
 					</div>
 				</div>
 
