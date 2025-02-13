@@ -35,7 +35,7 @@ const useStore = create<MyStore>(
             count: 0,
             set: (n) => set({ count: n })
         }),
-        { name: 'my-channel', targetOriginUrls: ['http://localhost:3000'], targetElementIFrameIds: [document.getElementById('iframe')] }
+        { name: 'my-store', targetOriginUrls: ['http://localhost:3000'], targetElementIFrameIds: ['iframe-id'] }
     )
 );
 
@@ -70,7 +70,7 @@ import { FC } from 'react';
 import { usePostMessage } from 'use-post-message-ts';
 
 const MyComponent: FC = () => {
-    const { state, send } = usePostMessage<{ value: number }>('my-channel', { value: 0 });
+    const { state, send } = usePostMessage<{ value: number }>('my-store', { value: 0 });
 
     return (
         <>
@@ -83,14 +83,14 @@ const MyComponent: FC = () => {
 export default MyComponent;
 ```
 
-With the example above, the component will re-render when the channel receives or sends a value.
+With the example above, the component will re-render when the shared state receives or sends a value.
 
 ```jsx
 import { FC, useEffect } from 'react';
 import { usePostMessage } from 'use-post-message-ts';
 
 const MyComponent: FC = () => {
-    const { send, subscribe } = usePostMessage<{ value: number }>('my-post-message-channel', { value: 0 }, { subscribe: true });
+    const { send, subscribe } = usePostMessage<{ value: number }>('my-post-message', { value: 0 }, { subscribe: true });
 
     useEffect(() => {
 	    const unsub = subscribe(({ value }) => console.log(`My new value is: ${value}`));
@@ -108,7 +108,7 @@ const MyComponent: FC = () => {
 export default MyComponent;
 ```
 
-With the example above, the component will not re-render when the channel receives or sends a value but will call the `subscribe` callback.
+With the example above, the component will not re-render when the shared state receives or sends a value but will call the `subscribe` callback.
 
 ## API
 
@@ -133,11 +133,11 @@ The options of the hook.
 
 Type: `string`
 
-The name of the channel to use.
+The name of the shared state to use.
 
 ##### options.targetOriginUrls
 
-Type: `targetOriginUrls` (default: [targetWindow.origin])
+Type: `targetOriginUrls` (default: ['*'])
 
 The target origins to send the message to. If the target origin is not in the list, the message will be sent to its own origin.
 
@@ -193,13 +193,13 @@ usePostMessage<T>(name: string, value?: T, options?: UsePostMessageOptions): {
 
 Type: `string`
 
-The name of the channel to use.
+The name of the store to use.
 
 ##### value
 
 Type: `T` (default: `undefined`)
 
-The initial value of the channel.
+The initial value of the store.
 
 ##### options
 
@@ -211,7 +211,7 @@ The options of the hook.
 
 Type: `boolean | undefined` (default: `undefined`)
 
-If true, the hook will not re-render the component when the channel receives a new value but will call the `subscribe` callback.
+If true, the hook will not re-render the component when the shared state receives a new value but will call the `subscribe` callback.
 
 #### Return
 
@@ -219,19 +219,19 @@ If true, the hook will not re-render the component when the channel receives a n
 
 Type: `T`
 
-The current value of the channel.
+The current value of the shared state.
 
 ##### send
 
 Type: `(value: T) => void`
 
-Send a new value to the channel.
+Send a new value to the shared state.
 
 ##### subscribe
 
 Type: `(callback: (e: T) => void) => () => void`
 
-Subscribe to the channel. The callback will be called when the channel receives a new value and when the options.subscribe is set to true.
+Subscribe to the shared state. The callback will be called when the shared state receives a new value and when the options.subscribe is set to true.
 
 ## What data can I send?
 
